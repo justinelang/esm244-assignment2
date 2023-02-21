@@ -39,8 +39,8 @@ lizards <- read_csv(here("data", "lizards.csv"))
 ```{r}
 #Create a function using given model
 
-func1 <- function(a,b,length){
- out= a*(length^b)
+func1 <- function(a, b, length){
+ out= a *(length^b)
 return(out)
 }
 ```
@@ -57,7 +57,7 @@ my_guess_model <- lm(log(lizards$weight) ~ log(lizards$SV_length), data = lizard
 
 #coefficients(my_guess_model)
 
-# (Intercept) log(lizards$SV_length) 
+# (Intercept) log(lizards$log_length) 
 #  -8.256862               2.479417
 
 #Mathematically transform the intercept coefficient to get the guess for parameter a
@@ -70,9 +70,9 @@ a <- exp((my_guess_model$coefficients[1]))
 ### Run NLS
 
 ```{r}
-lizard_nls <- nls(weight~func1(a,b,SV_length),
+lizard_nls <- nls(weight ~ func1(a, b, SV_length),
                   data=lizards,
-                  start=list(a = a, b=b),
+                  start=list(a = a, b = b),
                   trace=TRUE)
 
 #summary(lizard_nls)
