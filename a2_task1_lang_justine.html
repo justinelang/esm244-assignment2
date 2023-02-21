@@ -822,221 +822,7 @@ f2 &lt;- species ~ height + width + green_lvs
 
 palmetto_blr2 &lt;- glm(formula = f2,
                     data = palmetto_subset,
-                    family = &quot;binomial&quot;)
-
-tidy(palmetto_blr1) %&gt;% 
-  kable(col.names = c(&quot;Term&quot;, &quot;Estimate&quot;, &quot;Standard Error&quot;, &quot;Statistic&quot;, &quot;P-value&quot;),
-        caption = &quot;Table 1: Binary Logistic Regression Model 1&quot;) %&gt;% 
-  kable_classic(position = &quot;center&quot;)</code></pre>
-<table class=" lightable-classic" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
-<caption>
-Table 1: Binary Logistic Regression Model 1
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-Term
-</th>
-<th style="text-align:right;">
-Estimate
-</th>
-<th style="text-align:right;">
-Standard Error
-</th>
-<th style="text-align:right;">
-Statistic
-</th>
-<th style="text-align:right;">
-P-value
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-(Intercept)
-</td>
-<td style="text-align:right;">
--3.2266851
-</td>
-<td style="text-align:right;">
-0.1420708
-</td>
-<td style="text-align:right;">
--22.71180
-</td>
-<td style="text-align:right;">
-0
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-height
-</td>
-<td style="text-align:right;">
-0.0292173
-</td>
-<td style="text-align:right;">
-0.0023061
-</td>
-<td style="text-align:right;">
-12.66984
-</td>
-<td style="text-align:right;">
-0
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-length
-</td>
-<td style="text-align:right;">
--0.0458233
-</td>
-<td style="text-align:right;">
-0.0018661
-</td>
-<td style="text-align:right;">
--24.55600
-</td>
-<td style="text-align:right;">
-0
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-width
-</td>
-<td style="text-align:right;">
--0.0394434
-</td>
-<td style="text-align:right;">
-0.0021000
-</td>
-<td style="text-align:right;">
--18.78227
-</td>
-<td style="text-align:right;">
-0
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-green_lvs
-</td>
-<td style="text-align:right;">
-1.9084747
-</td>
-<td style="text-align:right;">
-0.0388634
-</td>
-<td style="text-align:right;">
-49.10728
-</td>
-<td style="text-align:right;">
-0
-</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>tidy(palmetto_blr2) %&gt;% 
-  kable(col.names = c(&quot;Term&quot;, &quot;Estimate&quot;, &quot;Standard Error&quot;, &quot;Statistic&quot;, &quot;P-value&quot;),
-        caption = &quot;Table 2: Binary Logistic Regression Model 2&quot;) %&gt;% 
-  kable_classic(position = &quot;center&quot;)</code></pre>
-<table class=" lightable-classic" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
-<caption>
-Table 2: Binary Logistic Regression Model 2
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-Term
-</th>
-<th style="text-align:right;">
-Estimate
-</th>
-<th style="text-align:right;">
-Standard Error
-</th>
-<th style="text-align:right;">
-Statistic
-</th>
-<th style="text-align:right;">
-P-value
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-(Intercept)
-</td>
-<td style="text-align:right;">
--3.7677215
-</td>
-<td style="text-align:right;">
-0.1353136
-</td>
-<td style="text-align:right;">
--27.844371
-</td>
-<td style="text-align:right;">
-0.0000000
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-height
-</td>
-<td style="text-align:right;">
-0.0029504
-</td>
-<td style="text-align:right;">
-0.0018811
-</td>
-<td style="text-align:right;">
-1.568426
-</td>
-<td style="text-align:right;">
-0.1167816
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-width
-</td>
-<td style="text-align:right;">
--0.0690186
-</td>
-<td style="text-align:right;">
-0.0017852
-</td>
-<td style="text-align:right;">
--38.660633
-</td>
-<td style="text-align:right;">
-0.0000000
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-green_lvs
-</td>
-<td style="text-align:right;">
-1.8848147
-</td>
-<td style="text-align:right;">
-0.0361268
-</td>
-<td style="text-align:right;">
-52.172204
-</td>
-<td style="text-align:right;">
-0.0000000
-</td>
-</tr>
-</tbody>
-</table>
+                    family = &quot;binomial&quot;)</code></pre>
 </div>
 <div id="aic-and-bic" class="section level3">
 <h3>AIC and BIC</h3>
@@ -1044,11 +830,11 @@ green_lvs
 
 aictab(list(palmetto_blr1, palmetto_blr2)) %&gt;% 
     kable(col.names = c(&quot;Model&quot;, &quot;Parameters&quot;, &quot;AIC&quot;, &quot;Delta AIC&quot;, &quot;Model Likelihood&quot;, &quot;AIC Weight&quot;, &quot;Log Likelihood&quot;, &quot;Cumulative Weight&quot;),
-        caption = &quot;Table 3: AIC Results&quot;) %&gt;% 
+        caption = &quot;Table 1: AIC Results&quot;) %&gt;% 
   kable_classic(position = &quot;center&quot;)</code></pre>
 <table class=" lightable-classic" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
-Table 3: AIC Results
+Table 1: AIC Results
 </caption>
 <thead>
 <tr>
@@ -1137,11 +923,11 @@ Mod2
 
 bictab(list(palmetto_blr1, palmetto_blr2)) %&gt;% 
     kable(col.names = c(&quot;Model&quot;, &quot;Parameters&quot;, &quot;BIC&quot;, &quot;Delta BIC&quot;, &quot;Model Likelihood&quot;, &quot;BIC Weight&quot;, &quot;Log Likelihood&quot;, &quot;Cumulative Weight&quot;),
-        caption = &quot;Table 4: BIC Results&quot;) %&gt;% 
+        caption = &quot;Table 2: BIC Results&quot;) %&gt;% 
   kable_classic(position = &quot;center&quot;)</code></pre>
 <table class=" lightable-classic" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
-Table 4: BIC Results
+Table 2: BIC Results
 </caption>
 <thead>
 <tr>
@@ -1257,13 +1043,13 @@ metrics1&lt;- collect_metrics(blr_tidy_cv_f1)
 
 nice_metrics&lt;- metrics1 %&gt;% 
   kable(col.names = c(&quot;Metric&quot;, &quot;Estimator&quot;, &quot;Mean&quot;, &quot;n&quot;, &quot;Standard Error&quot;, &quot;Configuration&quot;),
-        caption = &quot;Table 5: Cross Validation Metrics Model 1&quot;) %&gt;% 
+        caption = &quot;Table 3: Cross Validation Metrics Model 1&quot;) %&gt;% 
   kable_classic(position = &quot;center&quot;)
 
 nice_metrics</code></pre>
 <table class=" lightable-classic" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
-Table 5: Cross Validation Metrics Model 1
+Table 3: Cross Validation Metrics Model 1
 </caption>
 <thead>
 <tr>
@@ -1347,13 +1133,13 @@ metrics2&lt;- collect_metrics(blr_tidy_cv_f2)
 
 nice_metrics_2&lt;- metrics2 %&gt;% 
   kable(col.names = c(&quot;Metric&quot;, &quot;Estimator&quot;, &quot;Mean&quot;, &quot;n&quot;, &quot;Standard Error&quot;, &quot;Configuration&quot;),
-        caption = &quot;Table 6: Cross Validation Metrics Model 2&quot;) %&gt;% 
+        caption = &quot;Table 4: Cross Validation Metrics Model 2&quot;) %&gt;% 
   kable_classic(position = &quot;center&quot;)
 
 nice_metrics_2</code></pre>
 <table class=" lightable-classic" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
-Table 6: Cross Validation Metrics Model 2
+Table 4: Cross Validation Metrics Model 2
 </caption>
 <thead>
 <tr>
@@ -1421,11 +1207,227 @@ Preprocessor1_Model1
 </tbody>
 </table>
 <pre class="r"><code>#Mean accuracy is 0.8988 for model 2</code></pre>
-<p>Based on the AIC and BIC values, as well as the 10-fold cross
-validation, model 1 performs better. The AIC and BIC for model 1 were
-lower and the mean accuracy metric was 0.91677 compared to 0.89882 for
-model 2.</p>
+<p>AIC, BIC, and the repeated cross validation all indicate that Model 1
+performs better. AIC and BIC were lower for Model 1. Mean accuracy was
+greater (0.9168) for Model 1 than mean accuracy (0.8988) for Model 2.
+These results indicate that Model 1 is the better fit.</p>
 </div>
+</div>
+<div id="final-model" class="section level2">
+<h2>Final Model</h2>
+<pre class="r"><code>#Use the entire dataset to identify the coefficients for the final predictive model based on Model 1 
+
+blr_tidyfit_f1 &lt;- blr_model %&gt;% 
+  fit(f1, data = palmetto_subset)
+coefficient_df &lt;- blr_tidyfit_f1 %&gt;% 
+  tidy() %&gt;% 
+  kable(col.names = c(&quot;Term&quot;, &quot;Estimate&quot;,&quot;Standard Error&quot;, &quot;Statistic&quot;, &quot;P-Value&quot;),
+        caption = &quot;Table 5: Coefficients for Final Predictive Model&quot;) %&gt;% 
+  kable_classic(position = &quot;center&quot;)
+
+coefficient_df</code></pre>
+<table class=" lightable-classic" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
+<caption>
+Table 5: Coefficients for Final Predictive Model
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Term
+</th>
+<th style="text-align:right;">
+Estimate
+</th>
+<th style="text-align:right;">
+Standard Error
+</th>
+<th style="text-align:right;">
+Statistic
+</th>
+<th style="text-align:right;">
+P-Value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+-3.2266851
+</td>
+<td style="text-align:right;">
+0.1420708
+</td>
+<td style="text-align:right;">
+-22.71180
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+height
+</td>
+<td style="text-align:right;">
+0.0292173
+</td>
+<td style="text-align:right;">
+0.0023061
+</td>
+<td style="text-align:right;">
+12.66984
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+length
+</td>
+<td style="text-align:right;">
+-0.0458233
+</td>
+<td style="text-align:right;">
+0.0018661
+</td>
+<td style="text-align:right;">
+-24.55600
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+width
+</td>
+<td style="text-align:right;">
+-0.0394434
+</td>
+<td style="text-align:right;">
+0.0021000
+</td>
+<td style="text-align:right;">
+-18.78227
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+green_lvs
+</td>
+<td style="text-align:right;">
+1.9084747
+</td>
+<td style="text-align:right;">
+0.0388634
+</td>
+<td style="text-align:right;">
+49.10728
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>#Find probabilities associated with a palmetto being S. etonia or S. repens based on Model 1
+
+blr1_fitted &lt;- palmetto_blr1 %&gt;%
+  broom::augment(type.predict = &quot;response&quot;) %&gt;% 
+  
+#Add columns to see if the model correctly guessed the species
+  
+  mutate(species_predicted= case_when(.fitted &gt;= 0.5 ~ &quot;Serenoa repens&quot;,
+         TRUE ~ &quot;Sabal etonia&quot;)) %&gt;% 
+  mutate(correct_prediction= case_when(species == species_predicted ~ &quot;yes&quot;,
+                                        TRUE ~ &quot;no&quot;))
+#Create table
+
+palmetto_table &lt;- blr1_fitted %&gt;% 
+  select(species, correct_prediction) %&gt;% 
+  pivot_wider(names_from = correct_prediction, values_from = correct_prediction, values_fn =   list(correct_prediction = length)) %&gt;% 
+  mutate(percent_correctly_classified= yes/(yes+no)*100)
+nice_palmetto_table&lt;- palmetto_table %&gt;% 
+ kable(col.names = c(&quot;Species&quot;, &quot;Correctly Classified&quot;, &quot;Incorrectly Classified&quot;, &quot;Percent Correctly Classified&quot;),
+       caption = &quot;Table 6: Classification Results using Model 1&quot;) %&gt;% 
+ kable_classic(position = &quot;center&quot;)
+
+nice_palmetto_table</code></pre>
+<table class=" lightable-classic" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
+<caption>
+Table 6: Classification Results using Model 1
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Species
+</th>
+<th style="text-align:right;">
+Correctly Classified
+</th>
+<th style="text-align:right;">
+Incorrectly Classified
+</th>
+<th style="text-align:right;">
+Percent Correctly Classified
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Serenoa repens
+</td>
+<td style="text-align:right;">
+5548
+</td>
+<td style="text-align:right;">
+564
+</td>
+<td style="text-align:right;">
+90.77225
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Sabal etonia
+</td>
+<td style="text-align:right;">
+5701
+</td>
+<td style="text-align:right;">
+454
+</td>
+<td style="text-align:right;">
+92.62388
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Based on this analysis, Model 1 (using plant height, canopy length,
+canopy width, and green leaves) predicts species better than Model 2
+(using just plant height, canopy width, and green leaves). The lower AIC
+and BIC and higher mean accuracy support Model 1 as the better fit.
+Through Model 1, 91% of the palmetto plants were correctly classified as
+<em>Serenoa repens</em> and 93% were correctly classified as <em>Sabel
+etonia</em>. These numbers indicate there is a high probability of
+correctly classifying a palmetto species based on this model.</p>
+</div>
+<div id="citation" class="section level2">
+<h2>Citation</h2>
+<p>Abrahamson, W.G. 2019. Survival, growth and biomass estimates of two
+dominant palmetto species of south-central Florida from 1981 - 2017,
+ongoing at 5-year intervals ver 1. Environmental Data Initiative. <a href="https://doi.org/10.6073/pasta/f2f96ec76fbbd4b9db431c79a770c4d5" class="uri">https://doi.org/10.6073/pasta/f2f96ec76fbbd4b9db431c79a770c4d5</a></p>
 </div>
 
 

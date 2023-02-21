@@ -154,15 +154,6 @@ palmetto_blr2 <- glm(formula = f2,
                     data = palmetto_subset,
                     family = "binomial")
 
-tidy(palmetto_blr1) %>% 
-  kable(col.names = c("Term", "Estimate", "Standard Error", "Statistic", "P-value"),
-        caption = "Table 1: Binary Logistic Regression Model 1") %>% 
-  kable_classic(position = "center")
-
-tidy(palmetto_blr2) %>% 
-  kable(col.names = c("Term", "Estimate", "Standard Error", "Statistic", "P-value"),
-        caption = "Table 2: Binary Logistic Regression Model 2") %>% 
-  kable_classic(position = "center")
 ```
 
 ### AIC and BIC
@@ -172,14 +163,14 @@ tidy(palmetto_blr2) %>%
 
 aictab(list(palmetto_blr1, palmetto_blr2)) %>% 
     kable(col.names = c("Model", "Parameters", "AIC", "Delta AIC", "Model Likelihood", "AIC Weight", "Log Likelihood", "Cumulative Weight"),
-        caption = "Table 3: AIC Results") %>% 
+        caption = "Table 1: AIC Results") %>% 
   kable_classic(position = "center")
 
 #BIC
 
 bictab(list(palmetto_blr1, palmetto_blr2)) %>% 
     kable(col.names = c("Model", "Parameters", "BIC", "Delta BIC", "Model Likelihood", "BIC Weight", "Log Likelihood", "Cumulative Weight"),
-        caption = "Table 4: BIC Results") %>% 
+        caption = "Table 2: BIC Results") %>% 
   kable_classic(position = "center")
 ```
 
@@ -214,7 +205,7 @@ metrics1<- collect_metrics(blr_tidy_cv_f1)
 
 nice_metrics<- metrics1 %>% 
   kable(col.names = c("Metric", "Estimator", "Mean", "n", "Standard Error", "Configuration"),
-        caption = "Table 5: Cross Validation Metrics Model 1") %>% 
+        caption = "Table 3: Cross Validation Metrics Model 1") %>% 
   kable_classic(position = "center")
 
 nice_metrics
@@ -236,7 +227,7 @@ metrics2<- collect_metrics(blr_tidy_cv_f2)
 
 nice_metrics_2<- metrics2 %>% 
   kable(col.names = c("Metric", "Estimator", "Mean", "n", "Standard Error", "Configuration"),
-        caption = "Table 6: Cross Validation Metrics Model 2") %>% 
+        caption = "Table 4: Cross Validation Metrics Model 2") %>% 
   kable_classic(position = "center")
 
 nice_metrics_2
@@ -245,12 +236,60 @@ nice_metrics_2
 ```
 
 
-Based on the AIC and BIC values, as well as the 10-fold cross validation, model 1 performs better. The AIC and BIC for model 1 were lower and the mean accuracy metric was `r round(metrics1[1,3], 5)` compared to `r round(metrics2[1,3], 5)` for model 2.
+AIC, BIC, and the repeated cross validation all indicate that Model 1 performs better. AIC and BIC were lower for Model 1. Mean accuracy was greater (0.9168) for Model 1 than mean accuracy (0.8988) for Model 2. These results indicate that Model 1 is the better fit. 
 
 
+## Final Model
+
+```{r}
+#Use the entire dataset to identify the coefficients for the final predictive model based on Model 1 
+
+blr_tidyfit_f1 <- blr_model %>% 
+  fit(f1, data = palmetto_subset)
+coefficient_df <- blr_tidyfit_f1 %>% 
+  tidy() %>% 
+  kable(col.names = c("Term", "Estimate","Standard Error", "Statistic", "P-Value"),
+        caption = "Table 5: Coefficients for Final Predictive Model") %>% 
+  kable_classic(position = "center")
+
+coefficient_df
+```
+
+```{r}
+#Find probabilities associated with a palmetto being S. etonia or S. repens based on Model 1
+
+blr1_fitted <- palmetto_blr1 %>%
+  broom::augment(type.predict = "response") %>% 
+  
+#Add columns to see if the model correctly guessed the species
+  
+  mutate(species_predicted= case_when(.fitted >= 0.5 ~ "Serenoa repens",
+         TRUE ~ "Sabal etonia")) %>% 
+  mutate(correct_prediction= case_when(species == species_predicted ~ "yes",
+                                        TRUE ~ "no"))
+#Create table
+
+palmetto_table <- blr1_fitted %>% 
+  select(species, correct_prediction) %>% 
+  pivot_wider(names_from = correct_prediction, values_from = correct_prediction, values_fn =   list(correct_prediction = length)) %>% 
+  mutate(percent_correctly_classified= yes/(yes+no)*100)
+nice_palmetto_table<- palmetto_table %>% 
+ kable(col.names = c("Species", "Correctly Classified", "Incorrectly Classified", "Percent Correctly Classified"),
+       caption = "Table 6: Classification Results using Model 1") %>% 
+ kable_classic(position = "center")
+
+nice_palmetto_table
+```
 
 
+## Conclusion
 
+Based on this analysis, Model 1 (using plant height, canopy length, canopy width, and green leaves) predicts species better than Model 2 (using just plant height, canopy width, and green leaves). The lower AIC and BIC and higher mean accuracy support Model 1 as the better fit. Through Model 1, 91% of the palmetto plants were correctly classified as *Serenoa repens* and 93% were correctly classified as *Sabel etonia*. These numbers indicate there is a high probability of correctly classifying a palmetto species based on this model.
+
+
+## Citation
+
+Abrahamson, W.G. 2019. Survival, growth and biomass estimates of two dominant palmetto species of south-central Florida from 1981 - 2017, ongoing at 5-year intervals ver 1. Environmental Data Initiative. <https://doi.org/10.6073/pasta/f2f96ec76fbbd4b9db431c79a770c4d5>
 
 
 
