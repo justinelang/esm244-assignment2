@@ -1,0 +1,203 @@
+---
+title: "Assignment 2 Task 2"
+author: "Justine Lang"
+date: "2023-02-21"
+output: 
+  html_document: 
+    code_folding: hide
+---
+
+```{r setup, include=TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(here)
+library(kableExtra)
+library(Metrics)
+```
+
+## Data Overview
+
+Text here.
+
+```{r}
+#Read in the data
+
+lizards <- read_csv(here("data", "lizards.csv"))
+```
+
+
+## All Species NLS
+
+\begin{equation}
+\hat{W}=a(SVL)^b
+\end{equation}
+
+
+### Select Model
+
+```{r}
+#Create a function using given model
+
+func1 <- function(a,b,length){
+ out= a*(length^b)
+return(out)
+}
+```
+
+
+### Initial Guess
+
+```{r}
+#Run OLS regression on log transformed data
+
+my_guess_model <- lm(log(lizards$weight) ~ log(lizards$SV_length), data = lizards)
+
+#Get coefficients
+
+#coefficients(my_guess_model)
+
+# (Intercept) log(lizards$SV_length) 
+#  -8.256862               2.479417
+
+#Mathematically transform the intercept coefficient to get the guess for parameter a
+
+b <- my_guess_model$coefficients[2]
+a <- exp((my_guess_model$coefficients[1]))
+```
+
+
+### Run NLS
+
+```{r}
+lizard_nls <- nls(weight~func1(a,b,SV_length),
+                  data=lizards,
+                  start=list(a = a, b=b),
+                  trace=TRUE)
+
+#summary(lizard_nls)
+
+broom::tidy(lizard_nls) %>% 
+  kable(caption = "Table 1: Original NLS Results") %>% 
+  kable_classic()
+```
+
+
+## Make Prediction
+
+```{r figure 1, fig.align='center', fig.cap="Figure 1: Snout-vent length (mm) and body weight (g) for lizards sampled from Jornada Basin LTER site. Purple points are females and orange are males. The black line shows the predicted data using non-linear least squares to estimate parameters."}
+
+#Make a prediction based on the model
+
+lizard_predict <- lizards %>% 
+  mutate(predict=predict(lizard_nls,newdata=.))
+
+ggplot(data=lizard_predict) +
+  geom_point(aes(x = SV_length,y = weight, color = sex)) +
+  labs(x = "Snout-Vent Length (mm)",
+      y = "Body Weight (g)",
+      title = "NLS Data Predictions")+
+  geom_line(aes(x = SV_length,y=predict), color='black') +
+  scale_color_manual(values= c("darkmagenta", "orange")) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+
+
+## Male Western Whiptail NLS
+
+```{r}
+whiptail <- lizards %>% 
+  filter(spp == "CNTI", sex == "M")
+```
+
+
+### Select Model
+
+```{r}
+#Create a function using given model (already completed)
+
+func1 <- function(a,b,length){
+ out= a*(length^b)
+return(out)
+}
+```
+
+
+### Initial Guess
+
+```{r}
+#Run OLS regression on log transformed data
+
+my_guess_model_whip <- lm(log(whiptail$weight) ~ log(whiptail$SV_length), data = whiptail)
+
+#Get coefficients
+
+#coefficients(my_guess_model_whip)
+
+# (Intercept) log(lizards$SV_length) 
+#  -9.023963             2.698108
+
+#Mathematically transform the intercept coefficient to get the guess for parameter a
+
+b_whip <- my_guess_model_whip$coefficients[2]
+a_whip <- exp((my_guess_model_whip$coefficients[1]))
+```
+
+
+### Run NLS
+
+```{r}
+whiptail_nls <- nls(weight ~ func1(a, b, SV_length),
+                  data = whiptail,
+                  start = list(a = a_whip, b = b_whip),
+                  trace = TRUE)
+
+#summary(whiptail_nls)
+
+broom::tidy(whiptail_nls) %>% 
+  kable(caption = "Table 2: NLS Results for Male Western Whiptail Lizard Subset") %>% 
+  kable_classic()
+```
+
+
+## Make Prediction
+
+```{r figure 2, fig.align='center', fig.cap="Figure 2: Snout-vent length (mm) and body weight (g) for male western whiptail lizards sampled from Jornada Basin LTER site. The orange line represents the NLS predictions for just the specific species of males and the black line shows the predicted data using NLS for all species and sexes. The RMSE for the species specific male NLS model is 3.35 and the RMSE for the all species model is 3.46. Because it has a lower root-mean square error, the model with just male whiptail lizards should be used to predict this specific data."}
+
+#Prediction for whiptail model
+
+whiptail_predict <- whiptail %>% 
+  mutate(predict = predict(whiptail_nls, newdata=.)) %>% 
+  
+#Prediction for lizard model on whiptail dataset
+  
+  mutate(predict_with_orignls = predict(lizard_nls, newdata=.))
+
+#Plot both predictions on graph together
+
+ggplot(data = whiptail_predict) +
+  geom_point(aes(x = SV_length, y = weight)) +
+  labs(x = "Snout-Vent Length (mm)",
+      y = "Body Weight (g)",
+      title = "NLS Data Predictions") +
+    geom_line(aes(x = SV_length,y = predict, color = "male")) +
+  geom_line(aes(x = SV_length, y = predict_with_orignls, color = "all")) +
+  scale_colour_manual(name= "legend", values=c("male"="orange","all"= "black")) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Calculate RMSE for both models
+
+rmselizard <- rmse(whiptail_predict$weight, whiptail_predict$predict_with_orignls)
+rmsewhiptail <- rmse(whiptail_predict$weight, whiptail_predict$predict)
+```
+
+
+## Citation
+
+Lightfoot, D. and W.G. Whitford. 2020. Lizard pitfall trap data from 11 NPP study locations at the Jornada Basin LTER site, 1989-2006 ver 37. Environmental Data Initiative. https://doi.org/10.6073/pasta/4a6e258fb49c31e222ecbbcfd128967f
+
+
+
