@@ -1,0 +1,151 @@
+---
+title: "Assignment 2 Task 1"
+author: "Justine Lang"
+date: "2023-02-21"
+output: 
+  html_document: 
+    code_folding: hide
+---
+
+```{r setup, include=TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(here)
+library(GGally)
+library(broom)
+library(AICcmodavg)
+library(kableExtra)
+library(tidymodels)
+```
+
+## Data Overview
+
+Text here
+
+
+## Data Visualization
+
+Visualizations of differences in height, canopy length, canopy width, and green leaves for *Serenoa repens* and *Sabal etonia*. 
+
+```{r}
+#Read in the data
+
+palmetto <- read_csv(here("data", "palmetto.csv"))
+```
+
+### Data Wrangling
+
+```{r}
+#Rename species codes to species names
+
+palmetto_names <- palmetto %>% 
+   mutate(species = case_when(species == "1" ~ "Serenoa repens",
+    species == "2" ~ "Sabal etonia"))
+
+#Subset the data
+
+palmetto_subset <- palmetto_names %>% 
+  select(species, height:green_lvs) %>% 
+  drop_na()
+
+#Convert species to a factor
+palmetto_subset$species <- as.factor(palmetto_subset$species)
+
+#class(palmetto_subset$species)
+#levels(palmetto_subset$species)
+```
+
+### Create Graphs
+
+```{r}
+#Explore potential trends
+
+#ggpairs(palmetto_subset, aes(color = species)) 
+### Height & length, height & width, green leaves & species look like good relationships to visualize
+```
+
+```{r figure 1, fig.align='center', fig.cap="Figure 1: The relationship between plant height (cm) and canopy length (cm) for two palmetto species, observed from 1981 to 2017."}
+
+#Create the first figure
+
+height_length_gg <- ggplot(data = palmetto_subset, aes(x = height, y = length)) +
+  geom_point(aes(color = species), show.legend = FALSE) +
+  facet_wrap(~species) +
+  theme_minimal() +
+  labs( x = "Plant Height (cm)",
+        y = "Canopy Length (cm)",
+        title = "Palmetto Height and Canopy Length") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 12),
+        axis.title.x = element_text(vjust = 0.2, size = 10),
+        axis.title.y = element_text(size = 10),
+        axis.text = element_text(size = 8),
+        plot.background = element_rect(fill = "white"))+
+  scale_color_manual(values = c("green4", "dodgerblue2"))
+  
+height_length_gg
+```
+
+```{r figure 2, fig.align='center', fig.cap="Figure 2: The relationship between plant height (cm) and canopy width (cm) for two palmetto species, observed from 1981 to 2017."}
+
+#Create the second figure
+
+height_width_gg <- ggplot(data = palmetto_subset, aes(x = height, y = width)) +
+  geom_point(aes(color = species), show.legend = FALSE) +
+  facet_wrap(~species) +
+  theme_minimal() +
+  labs( x = "Plant Height (cm)",
+        y = "Canopy Width (cm)",
+        title = "Palmetto Height and Canopy Width") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 12),
+        axis.title.x = element_text(vjust = 0.2, size = 10),
+        axis.title.y = element_text(size = 10),
+        axis.text = element_text(size = 8),
+        plot.background = element_rect(fill = "white")) +
+  scale_color_manual(values = c("green4", "dodgerblue2"))
+
+height_width_gg
+```
+
+```{r figure 3, fig.align='center', fig.cap="Figure 3: A histogram comparing the number of green leaves between two palmetto species, observed from 1981 to 2017."}
+
+#Create the third figure
+
+leaves_gg <- ggplot(data = palmetto_subset, aes(x = green_lvs, fill = species)) +
+  geom_histogram() +
+  facet_wrap(~species) +
+  theme_minimal() +
+  labs( x = "Number of Green Leaves",
+        y = "Count per species",
+        title = "Count of Green Leaves Across Palmetto Species") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 12),
+        axis.title.x = element_text(vjust = 0.2, size = 10),
+        axis.title.y = element_text(size = 10),
+        axis.text = element_text(size = 8),
+        plot.background = element_rect(fill = "white"),
+        legend.position = "none")+
+  scale_fill_manual(values = c("green4", "dodgerblue2"))
+
+leaves_gg
+```
+
+
+Based on these plots, the easiest way to classify each species would be to count the number of green leaves. There is more overlap between their height, canopy length, and canopy width, though looking at a combination of the variables could further help narrow down classification. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
