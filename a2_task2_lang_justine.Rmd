@@ -19,7 +19,7 @@ library(Metrics)
 ## Data Overview
 
 This analysis used non-linear least squares (NLS) to estimate parameters of a length to weight
-model for lizard populations in New Mexico. The lizard data was collected from pitfall traps located at 11 consumer plots at Jornada Basin LTER site from 1989 to 2006, and includes the variables: species, sex, recapture status, snout-vent length, total length, weight, and whether tail is broken or whole (Lightfoot et al., 2020). This analysis will compare two length to weight NLS models: one for all observed lizard species and one for a subset of male Western Whiptail lizard (*Cnemidophorus tigrisatus*). 
+model for lizard populations in New Mexico. The lizard data was collected from pitfall traps located at 11 consumer plots at Jornada Basin LTER site from 1989 to 2006, and includes the variables: species, sex, recapture status, snout-vent length, total length, weight, and whether tail is broken or whole (Lightfoot et al., 2020). This analysis will compare two length to weight NLS models: one for all observed lizard species and one for a subset of the male Western Whiptail lizard (*Cnemidophorus tigrisatus*). 
 
 ```{r}
 #Read in the data
