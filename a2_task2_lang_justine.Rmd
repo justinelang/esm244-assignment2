@@ -18,7 +18,8 @@ library(Metrics)
 
 ## Data Overview
 
-Text here.
+This analysis used non-linear least squares (NLS) to estimate parameters of a length to weight
+model for lizard populations in New Mexico. The lizard data was collected from pitfall traps located at 11 consumer plots at Jornada Basin LTER site from 1989 to 2006, and includes the variables: species, sex, recapture status, snout-vent length, total length, weight, and whether tail is broken or whole (Lightfoot et al., 2020). This analysis will compare two length to weight NLS models: one for all observed lizard species and one for a subset of male Western Whiptail lizard (*Cnemidophorus tigrisatus*). 
 
 ```{r}
 #Read in the data
@@ -40,7 +41,7 @@ lizards <- read_csv(here("data", "lizards.csv"))
 #Create a function using given model
 
 func1 <- function(a, b, length){
- out= a *(length^b)
+ out = a *(length^b)
 return(out)
 }
 ```
@@ -57,7 +58,7 @@ my_guess_model <- lm(log(lizards$weight) ~ log(lizards$SV_length), data = lizard
 
 #coefficients(my_guess_model)
 
-# (Intercept) log(lizards$log_length) 
+# (Intercept) log(lizards$SV_length) 
 #  -8.256862               2.479417
 
 #Mathematically transform the intercept coefficient to get the guess for parameter a
@@ -73,30 +74,30 @@ a <- exp((my_guess_model$coefficients[1]))
 lizard_nls <- nls(weight ~ func1(a, b, SV_length),
                   data=lizards,
                   start=list(a = a, b = b),
-                  trace=TRUE)
+                  trace=FALSE)
 
 #summary(lizard_nls)
 
 broom::tidy(lizard_nls) %>% 
-  kable(caption = "Table 1: Original NLS Results") %>% 
+  kable(caption = "Table 1: All Species NLS Results") %>% 
   kable_classic()
 ```
 
 
 ## Make Prediction
 
-```{r figure 1, fig.align='center', fig.cap="Figure 1: Snout-vent length (mm) and body weight (g) for lizards sampled from Jornada Basin LTER site. Purple points are females and orange are males. The black line shows the predicted data using non-linear least squares to estimate parameters."}
+```{r figure 1, fig.align='center', fig.cap="Figure 1: Snout-vent length (mm) and body weight (g) for lizards sampled from Jornada Basin LTER site. Purple points are females and orange are males. The black line shows the predicted data using NLS to estimate parameters."}
 
 #Make a prediction based on the model
 
 lizard_predict <- lizards %>% 
-  mutate(predict=predict(lizard_nls,newdata=.))
+  mutate(predict = predict(lizard_nls,newdata =.))
 
-ggplot(data=lizard_predict) +
+ggplot(data = lizard_predict) +
   geom_point(aes(x = SV_length,y = weight, color = sex)) +
   labs(x = "Snout-Vent Length (mm)",
       y = "Body Weight (g)",
-      title = "NLS Data Predictions")+
+      title = "NLS Predictions - All Lizard Species")+
   geom_line(aes(x = SV_length,y=predict), color='black') +
   scale_color_manual(values= c("darkmagenta", "orange")) +
   theme_minimal() +
@@ -118,7 +119,7 @@ whiptail <- lizards %>%
 ```{r}
 #Create a function using given model (already completed)
 
-func1 <- function(a,b,length){
+func1 <- function(a, b, length){
  out= a*(length^b)
 return(out)
 }
@@ -152,19 +153,19 @@ a_whip <- exp((my_guess_model_whip$coefficients[1]))
 whiptail_nls <- nls(weight ~ func1(a, b, SV_length),
                   data = whiptail,
                   start = list(a = a_whip, b = b_whip),
-                  trace = TRUE)
+                  trace = FALSE)
 
 #summary(whiptail_nls)
 
 broom::tidy(whiptail_nls) %>% 
-  kable(caption = "Table 2: NLS Results for Male Western Whiptail Lizard Subset") %>% 
+  kable(caption = "Table 2: Male Western Whiptail NLS Results") %>% 
   kable_classic()
 ```
 
 
 ## Make Prediction
 
-```{r figure 2, fig.align='center', fig.cap="Figure 2: Snout-vent length (mm) and body weight (g) for male western whiptail lizards sampled from Jornada Basin LTER site. The orange line represents the NLS predictions for just the specific species of males and the black line shows the predicted data using NLS for all species and sexes. The RMSE for the species specific male NLS model is 3.35 and the RMSE for the all species model is 3.46. Because it has a lower root-mean square error, the model with just male whiptail lizards should be used to predict this specific data."}
+```{r figure 2, fig.align='center', fig.cap="Figure 2: Snout-vent length (mm) and body weight (g) for male Western Whiptail lizards. The orange line represents the NLS predictions for the male Western Whiptail subset, and the black line represents the NLS predictions for all species and sexes. The root-mean-square error (RMSE) for the subset model is 3.35, and the RMSE for the all species model is 3.46. The lower RMSE indicates the male Western Whiptail model fits the subset data better than the all species model."}
 
 #Prediction for whiptail model
 
@@ -173,7 +174,7 @@ whiptail_predict <- whiptail %>%
   
 #Prediction for lizard model on whiptail dataset
   
-  mutate(predict_with_orignls = predict(lizard_nls, newdata=.))
+  mutate(predict_all = predict(lizard_nls, newdata=.))
 
 #Plot both predictions on graph together
 
@@ -181,17 +182,17 @@ ggplot(data = whiptail_predict) +
   geom_point(aes(x = SV_length, y = weight)) +
   labs(x = "Snout-Vent Length (mm)",
       y = "Body Weight (g)",
-      title = "NLS Data Predictions") +
+      title = "NLS Predictions - Western Whiptail Comparison") +
     geom_line(aes(x = SV_length,y = predict, color = "male")) +
-  geom_line(aes(x = SV_length, y = predict_with_orignls, color = "all")) +
+  geom_line(aes(x = SV_length, y = predict_all, color = "all")) +
   scale_colour_manual(name= "legend", values=c("male"="orange","all"= "black")) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 
 #Calculate RMSE for both models
 
-rmselizard <- rmse(whiptail_predict$weight, whiptail_predict$predict_with_orignls)
-rmsewhiptail <- rmse(whiptail_predict$weight, whiptail_predict$predict)
+rmsewhiptail <- modelr::rmse(whiptail_nls, whiptail)
+rmselizard <- modelr::rmse(lizard_nls, whiptail)
 ```
 
 
